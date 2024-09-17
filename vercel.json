@@ -25,6 +25,16 @@
           { "key": "Access-Control-Allow-Credentials", "value": "true" }
         ]
       }
-    ]
+    ],
+    "functions": {
+      "api/**": {
+        "excludeFiles": [
+          "__pycache__/**",
+          "venv/**",
+          ".env",
+          ".gitignore"
+        ]
+      }
+    }
   }
   
