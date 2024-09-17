@@ -1,0 +1,11 @@
+fastapi 
+uvicorn
+fastapi-cors
+python-multipart
+langchain
+langchain-chroma
+langchain-openai
+langchain_community
+langchain_chroma
+langchain-groq
+python-dotenv
