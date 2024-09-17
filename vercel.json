@@ -27,7 +27,7 @@
       }
     ],
     "functions": {
-      "api/**": {
+      "api": {
         "excludeFiles": "__pycache__,venv,.env,.gitignore"
       }
     }
