@@ -38,6 +38,4 @@ next-env.d.ts
 
 venv
 
-vercel.json
-
 __pycache__/
