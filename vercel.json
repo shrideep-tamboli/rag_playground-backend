@@ -2,12 +2,7 @@
     "version": 2,
     "functions": {
       "api/**": {
-        "excludeFiles": [
-          "__pycache__/**",
-          "venv/**",
-          ".env",
-          ".gitignore"
-        ]
+        "excludeFiles": "__pycache__/**, venv/**, .env, .gitignore"
       }
     },
     "rewrites": [
