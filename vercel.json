@@ -25,6 +25,10 @@
           { "key": "Access-Control-Allow-Credentials", "value": "true" }
         ]
       }
-    ]
-  }
-  
+    ],
+    "functions": {
+      "api/**": {
+        "excludeFiles": "{.next,*.cache,node_modules,public,app,__pycache__,venv}/**"
+      }
+    }
+}
