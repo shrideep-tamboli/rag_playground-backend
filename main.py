@@ -7,7 +7,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://rag-playground-frontend-jl82g3lgv-shrideeps-projects.vercel.app/playground"],
+    allow_origins=["https://rag-playground-frontend-jl82g3lgv-shrideeps-projects.vercel.app/"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
