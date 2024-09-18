@@ -1,11 +1,5 @@
 {
     "version": 2,
-    "builds": [
-      {
-        "src": "main.py",
-        "use": "@vercel/python"
-      }
-    ],
     "functions": {
       "api/**": {
         "excludeFiles": "{__pycache__,venv}/**"
