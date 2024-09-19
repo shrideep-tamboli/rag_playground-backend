@@ -1,6 +1,5 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from pydantic import BaseModel, Field
 from typing import Optional
 
@@ -14,11 +13,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.middleware("http")
-async def add_referrer_policy_header(request, call_next):
-    response = await call_next(request)
-    response.headers['Referrer-Policy'] = 'origin-when-cross-origin'
-    return response
 
 # Global variable to store the uploaded file content
 uploaded_file_content = None
