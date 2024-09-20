@@ -1,9 +1,19 @@
+import uvicorn
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import Optional
 
 app = FastAPI()
+
+if __name__ == "__main__":
+    uvicorn.run(
+        "main:app", 
+        host="0.0.0.0", 
+        port=8000, 
+        ssl_keyfile="/etc/letsencrypt/live/64-227-185-75.nip.io/privkey.pem", 
+        ssl_certfile="/etc/letsencrypt/live/64-227-185-75.nip.io/fullchain.pem"
+    )
 
 app.add_middleware(
     CORSMiddleware,
