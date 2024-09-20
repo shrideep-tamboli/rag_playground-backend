@@ -1,4 +1,5 @@
-fastapi 
+fastapi
+fastapi[all]
 uvicorn
 fastapi-cors
 python-multipart
