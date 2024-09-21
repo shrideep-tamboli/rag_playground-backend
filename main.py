@@ -136,7 +136,7 @@ load_dotenv()
 #NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
 #NEO4J_DATABASE = os.getenv("NEO4J_DATABASE")
 groq_api_key = os.getenv("groq_api_key")
-OPENAI_API_KEY2 = os.getenv('OPENAI_API_KEY2')
+OPENAI_API_KEY2 = os.getenv('OPENAI_API_KEY')
 #LANGCHAIN_TRACING_V2 = "true"
 #LANGCHAIN_API_KEY = os.getenv("LANGCHAIN_API_KEY")
 #LANGCHAIN_PROJECT="RAG_Playground"
