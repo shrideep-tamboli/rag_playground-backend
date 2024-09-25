@@ -168,6 +168,18 @@ def vector_retrieval(rag_method: str, query: str, uploaded_file_name: str, file_
     recieved_llm = fine_tuning.llm if fine_tuning and fine_tuning.llm else "llama-3.1-70b-versatile"
     if recieved_llm == "gpt-3.5-turbo":
         llm = ChatOpenAI(model=recieved_llm) ##recieved_llm
+    elif recieved_llm == "gpt-4o-mini":
+        llm = ChatOpenAI(model=recieved_llm)
+    elif recieved_llm == "gpt-4o":
+        llm = ChatOpenAI(model=recieved_llm)
+    elif recieved_llm == "llama-3.1-8b-instant":
+        llm = ChatGroq(groq_api_key=groq_api_key, model_name=recieved_llm)
+    elif recieved_llm == "mixtral-8x7b-32768":
+        llm = ChatGroq(groq_api_key=groq_api_key, model_name=recieved_llm)
+    elif recieved_llm == "gemma-7b-it":
+        llm = ChatGroq(groq_api_key=groq_api_key, model_name=recieved_llm)
+    elif recieved_llm == "gemma2-9b-it":
+        llm = ChatGroq(groq_api_key=groq_api_key, model_name=recieved_llm)
     else:
         llm = ChatGroq(groq_api_key=groq_api_key, model_name="llama-3.1-70b-versatile")
 
