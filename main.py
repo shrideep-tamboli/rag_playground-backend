@@ -4,6 +4,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import Optional
 
+######### Loading Dotenv
+import os
+from dotenv import load_dotenv
+load_dotenv()
+#########
 app = FastAPI()
 
 if __name__ == "__main__":
@@ -17,7 +22,7 @@ if __name__ == "__main__":
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://www.ragit.in"],
+    allow_origins=[os.getenv("CORS_ORIGIN")],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -127,9 +132,6 @@ async def process_query(request: ProcessRequest):
     return response
 #######################################################################################################
 
-import os
-from dotenv import load_dotenv
-load_dotenv()
 ## Environment varibale initialization
 #NEO4J_URI = os.getenv("NEO4J_URI")
 #NEO4J_USERNAME = os.getenv("NEO4J_USERNAME")
