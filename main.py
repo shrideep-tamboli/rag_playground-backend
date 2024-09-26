@@ -172,6 +172,12 @@ def vector_retrieval(rag_method: str, query: str, uploaded_file_name: str, file_
         llm = ChatOpenAI(model=recieved_llm)
     elif recieved_llm == "gpt-4o":
         llm = ChatOpenAI(model=recieved_llm)
+    elif recieved_llm == "llama-3.2-90b-text-preview":
+        llm = ChatGroq(groq_api_key=groq_api_key, model_name=recieved_llm)
+    elif recieved_llm == "llama-3.2-11b-text-preview":
+        llm = ChatGroq(groq_api_key=groq_api_key, model_name=recieved_llm)
+    elif recieved_llm == "llama-3.2-1b-preview":
+        llm = ChatGroq(groq_api_key=groq_api_key, model_name=recieved_llm)
     elif recieved_llm == "llama-3.1-8b-instant":
         llm = ChatGroq(groq_api_key=groq_api_key, model_name=recieved_llm)
     elif recieved_llm == "mixtral-8x7b-32768":
