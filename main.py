@@ -161,7 +161,15 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import Runnable
 from langchain_groq import ChatGroq
+from langchain.chains import create_history_aware_retriever
+from langchain_core.prompts import MessagesPlaceholder
+from langchain_core.prompts import ChatPromptTemplate
+from langchain.chains import create_retrieval_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_core.messages import AIMessage, HumanMessage
 
+chat_history = []  # Chat history is used by qa_prompt and history_aware_retriever
+chat_history.clear()
 def vector_retrieval(rag_method: str, query: str, uploaded_file_name: str, file_content: bytes, fine_tuning: Optional[FineTuning] = None):
     
     ## Defining the finetuned variables
@@ -188,18 +196,7 @@ def vector_retrieval(rag_method: str, query: str, uploaded_file_name: str, file_
         llm = ChatGroq(groq_api_key=groq_api_key, model_name=recieved_llm)
     else:
         llm = ChatGroq(groq_api_key=groq_api_key, model_name="llama-3.1-70b-versatile")
-
-    ## Prompt Template
-    prompt_template = """
-    You are a helpful assistant. Given the following context and question, provide a detailed and relevant answer.
-
-    Context: {context}
-
-    Question: {question}
-
-    Answer:
-    """
-
+    
     # Handle the file content based on its type (text or binary)
     if uploaded_file_name.endswith('.txt'):
         file_content_str = uploaded_file_content.decode('utf-8')  # Decode as UTF-8 for text files
@@ -219,24 +216,65 @@ def vector_retrieval(rag_method: str, query: str, uploaded_file_name: str, file_
         splits = text_splitter.split_documents(pages)
         vectorstore = Chroma.from_documents(documents=splits, embedding=OpenAIEmbeddings())
         retriever = vectorstore.as_retriever()
-        prompt = PromptTemplate(input_variables=["context", "question"], template=prompt_template)
-
-        def format_docs(pages):
-            return "\n\n".join(i.page_content for i in pages)
         
-        rag_chain = (
-                    {"context": retriever | format_docs, "question": RunnablePassthrough()}
-                    | prompt
-                    | llm
-                    | StrOutputParser()
-                )
+        contextualize_q_system_prompt = ( 
+            "Given a chat history and the latest user question "
+            "which might reference context in the chat history, "
+            "formulate a standalone question which can be understood "
+            "without the chat history. Do NOT answer the question, "
+            "just reformulate it if needed and otherwise return it as is."
+        )
 
-        file_content_str = rag_chain.invoke(query)
+        contextualize_q_prompt = ChatPromptTemplate.from_messages(
+            [
+                ("system", contextualize_q_system_prompt),  # System prompt that instructs LLM to restructure a prompt with context if the latest query refers to past
+                MessagesPlaceholder("chat_history"),  # Chat_history is a list of messages
+                ("human", "{input}"),  # Human prompt is the latest query
+            ]
+        )
+
+        # Assuming you have correctly initialized `llm` and `retriever` objects
+        history_aware_retriever = create_history_aware_retriever(
+            llm=llm, retriever=retriever, prompt=contextualize_q_prompt
+        )
+
+        system_prompt1 = (
+            "You are an assistant for question-answering tasks. "
+            "Use the following pieces of retrieved context to answer "
+            "the question. If you don't know the answer, say that you "
+            "don't know. Use three sentences maximum and keep the "
+            "answer concise."
+            "\n\n"
+            "{context}"
+        )
+
+        qa_prompt = ChatPromptTemplate.from_messages(
+            [
+                ("system", system_prompt1),
+                MessagesPlaceholder("chat_history"),
+                ("human", "{input}"),
+            ]
+        )
+
+        # Ensure `llm` is correctly initialized
+        question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
+        rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)  # New rag_chain using history_aware_retriever
+        
+        ai_message = rag_chain.invoke({"input": query, "chat_history": chat_history})
+        chat_history.extend(
+                            [
+                                HumanMessage(content=query),
+                                AIMessage(content=ai_message["answer"]),
+                            ]
+                        )
+        n = len(chat_history)
+        print("Answer", ai_message["answer"])
+        print("Chat Hisotry", chat_history)
     
     else:
-        file_content_str = "[Unsupported file type]"  # Handle unsupported file types
+        ai_message = "[Unsupported file type]"  # Handle unsupported file types
         
-    return file_content_str
+    return ai_message["answer"]
 
 def multi_modal_rag(rag_method: str, query: str, fine_tuning: Optional[FineTuning] = None):
     temp_var = rag_method + " " + query
